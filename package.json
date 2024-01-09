@@ -2,7 +2,7 @@
   "name": "ec2-required-role-config-rule",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pharrox/ec2-required-role-config-rule.git"
+    "url": "https://github.com/vibe-io/ec2-required-role-config-rule.git"
   },
   "scripts": {
     "build": "npx projen build",
