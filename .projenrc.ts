@@ -2,7 +2,7 @@ import { awscdk } from 'projen';
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Kevin Lucas',
   authorAddress: 'Pharrox@users.noreply.github.com',
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.118.0',
   defaultReleaseBranch: 'master',
   gitignore: [
     '/.vscode/',
