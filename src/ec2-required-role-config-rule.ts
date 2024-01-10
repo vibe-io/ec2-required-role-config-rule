@@ -59,6 +59,7 @@ export class Ec2RequiredRoleConfigRule extends Resource {
       });
 
       new Ec2RequiredRoleRemediationConfiguration(this, 'remediation', {
+        automatic: props.remediation?.automatic,
         instanceProfile: this.defaultInstanceProfile,
         rule: this.rule,
       });

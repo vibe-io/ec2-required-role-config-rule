@@ -6,11 +6,13 @@ import { Ec2RequiredRoleRemediationDocument } from './ec2-required-role-remediat
 
 
 export interface Ec2RequiredRoleRemediationConfigurationProps extends ResourceProps {
+  readonly automatic?: boolean;
   readonly instanceProfile: IInstanceProfile;
   readonly rule: IRule;
 }
 
 export class Ec2RequiredRoleRemediationConfiguration extends Resource {
+  public readonly automatic: boolean;
   public readonly instanceProfile: IInstanceProfile;
   public readonly rule: IRule;
 
@@ -18,12 +20,14 @@ export class Ec2RequiredRoleRemediationConfiguration extends Resource {
   public constructor(scope: IConstruct, id: string, props: Ec2RequiredRoleRemediationConfigurationProps) {
     super(scope, id, props);
 
+    this.automatic = props.automatic ?? false;
     this.instanceProfile = props.instanceProfile;
     this.rule = props.rule;
 
     const automation = new Ec2RequiredRoleRemediationDocument(this, 'automation');
 
     new CfnRemediationConfiguration(this, 'Resource', {
+      automatic: this.automatic,
       configRuleName: this.rule.configRuleName,
       parameters: {
         AutomationAssumeRole: {
@@ -44,6 +48,7 @@ export class Ec2RequiredRoleRemediationConfiguration extends Resource {
           },
         },
       },
+      resourceType: 'AWS::EC2::Instance',
       targetId: automation.documentName,
       targetType: 'SSM_DOCUMENT',
     });
