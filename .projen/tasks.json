@@ -56,7 +56,31 @@
       },
       "steps": [
         {
+          "exec": "ls -la",
+          "name": "debug pre bump"
+        },
+        {
+          "exec": "git rev-parse HEAD",
+          "name": "pre bump ref"
+        },
+        {
+          "exec": "pwd",
+          "name": "pre bump pwd"
+        },
+        {
           "builtin": "release/bump-version"
+        },
+        {
+          "exec": "ls -la",
+          "name": "debug post bump"
+        },
+        {
+          "exec": "git rev-parse HEAD",
+          "name": "post bump ref"
+        },
+        {
+          "exec": "pwd",
+          "name": "post bump pwd"
         }
       ],
       "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
