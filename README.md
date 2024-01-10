@@ -19,7 +19,6 @@ npm install ec2-required-role-config-rule --save
 ```
 import { Ec2RequiredRoleConfigRule } from 'ec2-required-role-config-rule';
 
-
 new Ec2RequiredRoleConfigRule(this, 'Ec2RequiredRoleConfigRule');
 ```
 
@@ -46,7 +45,7 @@ new Ec2RequiredRoleConfigRule(this, 'Ec2RequiredRoleConfigRule', {
 ```
 new Ec2RequiredRoleConfigRule(this, 'Ec2RequiredRoleConfigRule', {
     remediation: {
-        automatic: false,
+        automatic: true,
     },
 });
 ```
