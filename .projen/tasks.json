@@ -5,16 +5,36 @@
       "description": "Full release build",
       "steps": [
         {
+          "exec": "ls -la",
+          "name": "debug build start"
+        },
+        {
           "spawn": "default"
+        },
+        {
+          "exec": "ls -la",
+          "name": "debug post default"
         },
         {
           "spawn": "pre-compile"
         },
         {
+          "exec": "ls -la",
+          "name": "debug post pre-compile"
+        },
+        {
           "spawn": "compile"
         },
         {
+          "exec": "ls -la",
+          "name": "debug post compile"
+        },
+        {
           "spawn": "post-compile"
+        },
+        {
+          "exec": "ls -la",
+          "name": "debug post post-compile"
         },
         {
           "spawn": "test"
