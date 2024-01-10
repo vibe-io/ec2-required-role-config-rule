@@ -7,7 +7,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   gitignore: [
     '/.vscode/',
   ],
-  jsiiVersion: '~5.0.0',
+  jsiiVersion: '~5.3.0',
   name: 'ec2-required-role-config-rule',
   projenrcTs: true,
   repositoryUrl: 'https://github.com/vibe-io/ec2-required-role-config-rule.git',
