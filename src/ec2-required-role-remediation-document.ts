@@ -1,4 +1,5 @@
 import { ArnFormat, Resource, ResourceProps } from 'aws-cdk-lib';
+import { IGrantable, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CfnDocument } from 'aws-cdk-lib/aws-ssm';
 import { IConstruct } from 'constructs';
 
@@ -83,5 +84,21 @@ export class Ec2RequiredRoleRemediationDocument extends Resource {
 
   public automationDefinitionArnForVersion(version: string): string {
     return `${this.automationDefinitionArn}:${version}`;
+  }
+
+  public grantExecute(principal: IGrantable): void {
+    principal.grantPrincipal.addToPrincipalPolicy(new PolicyStatement({
+      actions: [
+        'ec2:AssociateIamInstanceProfile',
+      ],
+      resources: [
+        this.stack.formatArn({
+          arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+          resource: 'instance',
+          resourceName: '*',
+          service: 'ec2',
+        }),
+      ],
+    }));
   }
 }

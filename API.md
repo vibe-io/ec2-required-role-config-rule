@@ -376,6 +376,8 @@ const ec2RequiredRoleRemediationOptions: Ec2RequiredRoleRemediationOptions = { .
 | --- | --- | --- |
 | <code><a href="#ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.automatic">automatic</a></code> | <code>boolean</code> | *No description.* |
 | <code><a href="#ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.enabled">enabled</a></code> | <code>boolean</code> | *No description.* |
+| <code><a href="#ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.maxAutomaticAttempts">maxAutomaticAttempts</a></code> | <code>number</code> | *No description.* |
+| <code><a href="#ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.retryPeriod">retryPeriod</a></code> | <code>aws-cdk-lib.Duration</code> | *No description.* |
 | <code><a href="#ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.role">role</a></code> | <code>aws-cdk-lib.aws_iam.IRole</code> | *No description.* |
 
 ---
@@ -397,6 +399,26 @@ public readonly enabled: boolean;
 ```
 
 - *Type:* boolean
+
+---
+
+##### `maxAutomaticAttempts`<sup>Optional</sup> <a name="maxAutomaticAttempts" id="ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.maxAutomaticAttempts"></a>
+
+```typescript
+public readonly maxAutomaticAttempts: number;
+```
+
+- *Type:* number
+
+---
+
+##### `retryPeriod`<sup>Optional</sup> <a name="retryPeriod" id="ec2-required-role-config-rule.Ec2RequiredRoleRemediationOptions.property.retryPeriod"></a>
+
+```typescript
+public readonly retryPeriod: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
 
 ---
 
