@@ -1,6 +1,6 @@
 import { Duration, Resource, ResourceProps } from 'aws-cdk-lib';
 import { CustomRule, ResourceType, RuleScope } from 'aws-cdk-lib/aws-config';
-import { IInstanceProfile, IRole, InstanceProfile, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { IInstanceProfile, IRole, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IConstruct } from 'constructs';
 import { Ec2RequiredRoleRemediationConfiguration } from './ec2-required-role-remediation-configuration';
@@ -55,14 +55,9 @@ export class Ec2RequiredRoleConfigRule extends Resource {
         path: '/service-role/',
       });
 
-      this.defaultInstanceProfile = new InstanceProfile(this, 'default-ec2-instance-profile', {
-        path: '/service-role/',
-        role: this.defaultRole,
-      });
-
       new Ec2RequiredRoleRemediationConfiguration(this, 'remediation', {
         automatic: props.remediation?.automatic,
-        instanceProfile: this.defaultInstanceProfile,
+        ec2DefaultRole: this.defaultRole,
         maxAutomaticAttempts: props.remediation?.maxAutomaticAttempts,
         retryPeriod: props.remediation?.retryPeriod,
         rule: this.rule,

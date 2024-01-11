@@ -47,7 +47,7 @@ test('automatic remediation should have required properties', () => {
 
 test('automatic remediation should properly configure permissions', () => {
   const stack = new Stack();
-  const rule = new Ec2RequiredRoleConfigRule(stack, 'rule', {
+  new Ec2RequiredRoleConfigRule(stack, 'rule', {
     remediation: {
       automatic: true,
     },
@@ -55,12 +55,8 @@ test('automatic remediation should properly configure permissions', () => {
 
   const template = Template.fromStack(stack);
 
-  const remediation = rule.node.tryFindChild('remediation');
-  const automationRoleL2 = remediation?.node.tryFindChild('automation-role');
-  const automationRoleL1 = automationRoleL2?.node.defaultChild;
-
-  expect(CfnResource.isCfnResource(automationRoleL1)).toBe(true);
-  const automationRoleResource = automationRoleL1 as CfnResource;
+  const automationRole = getRemediationAutomationRole(stack);
+  const defaultEc2Role = getDefaultEc2Role(stack);
 
   template.hasResourceProperties('AWS::IAM::Role', {
     AssumeRolePolicyDocument: {
@@ -77,19 +73,26 @@ test('automatic remediation should properly configure permissions', () => {
 
   template.hasResourceProperties('AWS::IAM::Policy', {
     PolicyDocument: {
-      Statement: [{
-        Action: 'ec2:AssociateIamInstanceProfile',
-        Effect: 'Allow',
-        Resource: stack.resolve(stack.formatArn({
-          arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
-          resource: 'instance',
-          resourceName: '*',
-          service: 'ec2',
-        })),
-      }],
+      Statement: [
+        {
+          Action: 'ec2:AssociateIamInstanceProfile',
+          Effect: 'Allow',
+          Resource: stack.resolve(stack.formatArn({
+            arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+            resource: 'instance',
+            resourceName: '*',
+            service: 'ec2',
+          })),
+        },
+        {
+          Action: 'iam:PassRole',
+          Effect: 'Allow',
+          Resource: stack.resolve(defaultEc2Role.getAtt('Arn')),
+        },
+      ],
     },
     Roles: [
-      stack.resolve(automationRoleResource.ref),
+      stack.resolve(automationRole.ref),
     ],
   });
 
@@ -98,10 +101,29 @@ test('automatic remediation should properly configure permissions', () => {
       AutomationAssumeRole: {
         StaticValue: {
           Values: [
-            stack.resolve(automationRoleResource.getAtt('Arn')),
+            stack.resolve(automationRole.getAtt('Arn')),
           ],
         },
       },
     },
   });
 });
+
+function getRemediationAutomationRole(stack: Stack): CfnResource {
+  const rule = stack.node.tryFindChild('rule');
+  const remediation = rule?.node.tryFindChild('remediation');
+  const role = remediation?.node.tryFindChild('automation-role');
+  const resource = role?.node.defaultChild;
+
+  expect(CfnResource.isCfnResource(resource)).toBe(true);
+  return resource as CfnResource;
+}
+
+function getDefaultEc2Role(stack: Stack): CfnResource {
+  const rule = stack.node.findChild('rule');
+  const role = rule.node.findChild('default-ec2-role');
+  const resource = role.node.defaultChild;
+
+  expect(CfnResource.isCfnResource(resource)).toBe(true);
+  return resource as CfnResource;
+}

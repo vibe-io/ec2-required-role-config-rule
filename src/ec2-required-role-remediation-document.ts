@@ -1,8 +1,12 @@
 import { ArnFormat, Resource, ResourceProps } from 'aws-cdk-lib';
-import { IGrantable, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IGrantable, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CfnDocument } from 'aws-cdk-lib/aws-ssm';
 import { IConstruct } from 'constructs';
 
+
+export interface GrantRemediationExecuteOptions {
+  readonly allowedEc2Roles?: IRole[];
+}
 
 export interface Ec2RequiredRoleRemediationDocumentProps extends ResourceProps {}
 
@@ -86,7 +90,16 @@ export class Ec2RequiredRoleRemediationDocument extends Resource {
     return `${this.automationDefinitionArn}:${version}`;
   }
 
-  public grantExecute(principal: IGrantable): void {
+  public grantExecute(principal: IGrantable, options: GrantRemediationExecuteOptions = {}): void {
+    const defaultPassRoles = [
+      this.stack.formatArn({
+        arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+        resource: 'instance',
+        resourceName: '*',
+        service: 'ec2',
+      }),
+    ];
+
     principal.grantPrincipal.addToPrincipalPolicy(new PolicyStatement({
       actions: [
         'ec2:AssociateIamInstanceProfile',
@@ -99,6 +112,15 @@ export class Ec2RequiredRoleRemediationDocument extends Resource {
           service: 'ec2',
         }),
       ],
+    }));
+
+    principal.grantPrincipal.addToPrincipalPolicy(new PolicyStatement({
+      actions: [
+        'iam:PassRole',
+      ],
+      resources: options.allowedEc2Roles?.map((x) => {
+        return x.roleArn;
+      }) ?? defaultPassRoles,
     }));
   }
 }
